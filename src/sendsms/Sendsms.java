@@ -1,66 +1,59 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Main.java to edit this template
- */
 package sendsms;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 
 /**
- *
- * @author thami
+ * A simple class to send SMS using the Send.lk API.
+ * 
+ * Note: Replace the placeholder values with your actual credentials
+ *       securely (e.g., via environment variables or configuration file).
  */
 public class Sendsms {
 
-    /**
-     * @param args the command line arguments
-     */
-  
-          public static void main(String[] args) {
+    public static void main(String[] args) {
         try {
-            // Define the API endpoint and parameters
-            String token = "2478|7WlmsJihUzB7rcpHR9hfQmrFfpefNgpDUrkiFbFy";
-            String to = "0762555196";
+            // API credentials and message details
+            String token = System.getenv("SENDLK_API_TOKEN"); // Use environment variable
+            String to = "076XXXXXXX"; // Replace with recipient number
             String from = "SendTest";
-            String message = "Hello\nLochana";
+            String message = "Hello\nThamindu";
 
             // URL encode the message
             String encodedMessage = URLEncoder.encode(message, "UTF-8");
 
-            // Construct the URL
-            String apiUrl = "https://send.lk/sms/send.php?token=" + token +
-                            "&to=" + to +
-                            "&from=" + from +
-                            "&message=" + encodedMessage;
+            // Construct the API URL
+            String apiUrl = String.format(
+                "https://send.lk/sms/send.php?token=%s&to=%s&from=%s&message=%s",
+                token, to, from, encodedMessage
+            );
 
-            // Create a URL object
+            // Send the HTTP GET request
             URL url = new URL(apiUrl);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("GET");
-            conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
 
-            // Get the response
+            // Read the API response
             int responseCode = conn.getResponseCode();
             BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-            String inputLine;
             StringBuilder response = new StringBuilder();
+            String inputLine;
 
             while ((inputLine = in.readLine()) != null) {
                 response.append(inputLine);
             }
             in.close();
 
-            // Print the response
+            // Output response
             System.out.println("Response Code: " + responseCode);
-            System.out.println("Response: " + response.toString());
+            System.out.println("Response: " + response);
 
         } catch (Exception e) {
+            System.err.println("Error sending SMS: " + e.getMessage());
             e.printStackTrace();
         }
     }
-    
 }
